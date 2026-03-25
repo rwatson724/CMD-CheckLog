@@ -8,7 +8,7 @@ REM Log is scanned for main keywords
 
 REM  --------------- Retrieve start time to generate the elapsed time for execution and log checking ---------------
 set sttime=%time%
-for /F "tokens=1-4 delims=:.," %%a in ("%time%") do (
+for /F "tokens=1-4 delims=:.," %%a in ("%sttime%") do (
    set /A "start=(((%%a*60)+1%%b %% 100)*60+1%%c %% 100)*100+1%%d %% 100"
 )
 
@@ -16,8 +16,8 @@ for %%A in (%*) do set pgm=%%~nA
 
 ECHO Detection of active folder = %~d1%~p1
 REM Check to see if Logs and Lsts folders are existing as subfolder of main directory, alternatively at same level as main directory or logs and lsts are saved in same directory
-if exist "%~d1%~p1\Logs" (set LogFldr=%~d1%~p1\Logs") else if exist "%~d1%~p1..\Logs" (set LogFldr="%~d1%~p1..\Logs) else (set LogFldr=%~d1%~p1)
-if exist "%~d1%~p1\Lsts" (set LstFldr=%~d1%~p1\Lsts") else if exist "%~d1%~p1..\Lsts" (set LstFldr="%~d1%~p1..\Lsts) else (set LstFldr=%~d1%~p1)
+if exist "%~d1%~p1\Logs" (set LogFldr=%~d1%~p1\Logs) else if exist "%~d1%~p1..\Logs" (set LogFldr=%~d1%~p1..\Logs) else (set LogFldr=%~d1%~p1)
+if exist "%~d1%~p1\Lsts" (set LstFldr=%~d1%~p1\Lsts) else if exist "%~d1%~p1..\Lsts" (set LstFldr=%~d1%~p1..\Lsts) else (set LstFldr=%~d1%~p1)
 
 set LogCk=%LogFldr%
 
@@ -40,7 +40,8 @@ ECHO Program:     %pgm%                                                         
 
 %sas% -sysin "%~d1%~p1%pgm%.sas" %plog% %plst% -icon -nosplash -rsasuser
 
-ECHO '%pgm%' Execution completed at !date! !time!                                                                                                     >> %LogCk%\__logck_summary_%pgm%.txt" 
+ECHO '%pgm%' Execution completed at !date! !time!                                                                                                     >> "%LogCk%\__logck_summary_%pgm%.txt" 
+
 ECHO.                                                                                                                                                 > "%LogCk%\__logck_%pgm%.txt"
 ECHO --- Log scanning - messages are displayed by decreasing order of criticality:                                                                    >> "%LogCk%\__logck_%pgm%.txt" 
 findstr /A:4F /n /OFFLINE "ERROR" "%LogFldr%\%pgm%.log"                                                                                               >> "%LogCk%\__logck_%pgm%.txt" 
@@ -124,9 +125,9 @@ ECHO.                                                                           
 ECHO =========================================================== batch END ===========================================================                >> "%LogCk%\__logck_%pgm%.txt"
 
 REM --------------- Compute Time of Execution ---------------
-
 set entime=%time%
-for /F "tokens=1-4 delims=:.," %%a in ("%time%") do (
+
+for /F "tokens=1-4 delims=:.," %%a in ("%entime%") do (
    set /A "end=(((%%a*60)+1%%b %% 100)*60+1%%c %% 100)*100+1%%d %% 100"
 )
 
